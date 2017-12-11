@@ -112,10 +112,17 @@ class PostDetailView(TranslatableSlugMixin, BaseBlogView, DetailView):
         return super(PostDetailView, self).get(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
+        from taggit.models import Tag
+
         context = super(PostDetailView, self).get_context_data(**kwargs)
         context['meta'] = self.get_object().as_meta()
         context['instant_article'] = self.instant_article
         context['use_placeholder'] = get_setting('USE_PLACEHOLDER')
+
+        # add more extra field
+        context['category_list'] = BlogCategory.objects.all().annotate(count=Count('blog_posts'))
+        context['recent_post'] = Post.objects.all().order_by('-date_created')[:6]
+        context['tag_list'] = Tag.objects.all()
         setattr(self.request, get_setting('CURRENT_POST_IDENTIFIER'), self.get_object())
         return context
 
