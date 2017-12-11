@@ -68,9 +68,13 @@ class BaseBlogListView(BaseBlogView):
     base_template_name = 'post_list.html'
 
     def get_context_data(self, **kwargs):
+        from taggit.models import Tag
+
         context = super(BaseBlogListView, self).get_context_data(**kwargs)
         context['TRUNCWORDS_COUNT'] = get_setting('POSTS_LIST_TRUNCWORDS_COUNT')
         context['category_list'] = BlogCategory.objects.all()
+        context['recent_post'] = Post.objects.all().order_by('-date_created')[:6]
+        context['tag_list'] = Tag.objects.all()
         return context
 
     def get_paginate_by(self, queryset):

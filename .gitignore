@@ -47,3 +47,9 @@ docs/_build
 *~
 *.db
 *.sqlite
+
+# Virtualenv
+*-venv/
+venv/
+*-env/
+env/
