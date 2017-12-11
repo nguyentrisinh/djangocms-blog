@@ -12,6 +12,7 @@ from django.utils.timezone import now
 from django.utils.translation import get_language
 from django.views.generic import DetailView, ListView
 from parler.views import TranslatableSlugMixin, ViewUrlMixin
+from django.db.models import Count
 
 from .models import BlogCategory, Post
 from .settings import get_setting
@@ -72,7 +73,7 @@ class BaseBlogListView(BaseBlogView):
 
         context = super(BaseBlogListView, self).get_context_data(**kwargs)
         context['TRUNCWORDS_COUNT'] = get_setting('POSTS_LIST_TRUNCWORDS_COUNT')
-        context['category_list'] = BlogCategory.objects.all()
+        context['category_list'] = BlogCategory.objects.all().annotate(count=Count('blog_posts'))
         context['recent_post'] = Post.objects.all().order_by('-date_created')[:6]
         context['tag_list'] = Tag.objects.all()
         return context
