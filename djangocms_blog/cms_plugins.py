@@ -130,9 +130,30 @@ class BlogArchivePlugin(BlogPlugin):
         return context
 
 
+class RecentBlogPlugin(BlogPlugin):
+    """
+    Cached plugin which returns the latest published posts
+    """
+    name = get_setting('LATEST_ENTRIES_PLUGIN_NAME_CACHED')
+    model = LatestPostsPlugin
+    form = LatestEntriesForm
+    filter_horizontal = ('categories',)
+    fields = ['app_config', 'latest_posts', 'tags', 'categories'] + \
+        ['template_folder'] if len(get_setting('PLUGIN_TEMPLATE_FOLDERS')) > 1 else []
+    base_render_template = 'recent_blog.html'
+
+    def render(self, context, instance, placeholder):
+        context = super(RecentBlogPlugin, self).render(context, instance, placeholder)
+        context['posts_list'] = instance.get_posts(context['request'])
+        context['TRUNCWORDS_COUNT'] = get_setting('POSTS_LIST_TRUNCWORDS_COUNT')
+        context['recemt_post'] = Post.objects.all()[:3]
+        return context
+
+
 plugin_pool.register_plugin(BlogLatestEntriesPlugin)
 plugin_pool.register_plugin(BlogLatestEntriesPluginCached)
 plugin_pool.register_plugin(BlogAuthorPostsPlugin)
 plugin_pool.register_plugin(BlogTagsPlugin)
 plugin_pool.register_plugin(BlogArchivePlugin)
 plugin_pool.register_plugin(BlogCategoryPlugin)
+plugin_pool.register_plugin(RecentBlogPlugin)
