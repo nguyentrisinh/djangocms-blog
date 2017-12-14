@@ -117,6 +117,8 @@ def get_setting(name):
             settings, 'BLOG_LATEST_ENTRIES_PLUGIN_NAME', _('Latest Blog Articles')),
         'BLOG_LATEST_ENTRIES_PLUGIN_NAME_CACHED': getattr(
             settings, 'BLOG_LATEST_ENTRIES_PLUGIN_NAME_CACHED', _('Latest Blog Articles - Cache')),
+        'BLOG_RECENT_POST_PLUGIN': getattr(
+            settings, 'BLOG_RECENT_POST_PLUGIN', _('Recent Post Plugin')),
         'BLOG_AUTHOR_POSTS_PLUGIN_NAME': getattr(
             settings, 'BLOG_AUTHOR_POSTS_PLUGIN_NAME', _('Author Blog Articles')),
         'BLOG_TAGS_PLUGIN_NAME': getattr(

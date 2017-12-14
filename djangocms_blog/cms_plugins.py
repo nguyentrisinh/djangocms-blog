@@ -5,6 +5,7 @@ import os.path
 
 from cms.plugin_base import CMSPluginBase
 from cms.plugin_pool import plugin_pool
+from cms.models.pluginmodel import CMSPlugin
 from django.contrib.sites.shortcuts import get_current_site
 from django.db import models
 
@@ -134,19 +135,26 @@ class RecentBlogPlugin(BlogPlugin):
     """
     Cached plugin which returns the latest published posts
     """
-    name = get_setting('LATEST_ENTRIES_PLUGIN_NAME_CACHED')
+    # model = CMSPlugin
+    # render_template = 'djangocms_blog/plugins/recent_blogs.html'
+
+    """
+    Cached plugin which returns the latest published posts
+    """
+    name = get_setting('RECENT_POST_PLUGIN')
     model = LatestPostsPlugin
-    form = LatestEntriesForm
-    filter_horizontal = ('categories',)
-    fields = ['app_config', 'latest_posts', 'tags', 'categories'] + \
-        ['template_folder'] if len(get_setting('PLUGIN_TEMPLATE_FOLDERS')) > 1 else []
-    base_render_template = 'recent_blog.html'
+    base_render_template = 'recent_blogs.html'
+
+    # def render(self, context, instance, placeholder):
+    #     context = super(RecentBlogPlugin, self).render(context, instance, placeholder)
+    #     context['recent_post'] = Post.objects.all()[:3]
+    #     return context
 
     def render(self, context, instance, placeholder):
         context = super(RecentBlogPlugin, self).render(context, instance, placeholder)
-        context['posts_list'] = instance.get_posts(context['request'])
+        context['posts_list'] = instance.get_posts(context['request'], published_only=False)
         context['TRUNCWORDS_COUNT'] = get_setting('POSTS_LIST_TRUNCWORDS_COUNT')
-        context['recemt_post'] = Post.objects.all()[:3]
+        context['recent_post'] = Post.objects.all()[:3]
         return context
 
 
